@@ -7,14 +7,18 @@
 # PROJECT_NAME = 'EDINETScraping'
 # BASE_DIR = f'/content/drive/My Drive/Colab Notebooks/data/{ PROJECT_NAME }/'
 
+# データをストックする起点フォルダを作成
 PROJECT_NAME = 'EDINETScraping'
 BASE_DIR = f'/Users/bonnychan/PycharmProjects/sd/{ PROJECT_NAME }/'
-
-# ＜＜＜＜＜＜＜＜　ここから　＞＞＞＞＞＞＞＞＞＞
 
 import os
 os.makedirs( BASE_DIR ,exist_ok=True )
 
+
+
+
+
+# ＜＜＜＜＜＜＜＜　ここから　＞＞＞＞＞＞＞＞＞＞
 
 # EDINETのAPIから必要なXBRLファイルのURLを取得し、dat_download.csvというURL一覧のファイルを作成する。
 # 以下のCell-2 Cell-3をそのまま実行するとdat_download_200601_200602.csvというファイルが作成される。
