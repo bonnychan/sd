@@ -45,45 +45,61 @@ class catcher():
         self.file_name = f'dat_download{ self.file_info_str }.csv'
         self.base_path = f'{ os.getcwd() if base_dir == None else base_dir }'
 
-# 特殊メソッド「__get_link_info_str」を作成
+    # __get_link_info_str について
+    # APIからGETするメソッド
+    # params とは？url の最後に追加して、GETしたい情報を追加
     def __get_link_info_str(self, datetime):
         str_datetime = datetime.strftime('%Y-%m-%d')
         params = {"date": str_datetime, "type": 2}
-# APIからJason形式でリクエストGET。
+
         count, retry = 0, 3
         while True:
             try:
                 response = requests.get(f'{ self.base_url }.json', params=params, verify=False)
                 return response.text
+
+            # 例外処理
             except Exception:
                 print(f'{str_datetime} のアクセスに失敗しました。[ {count} ]')
                 if count < retry:
                     count += 1
                     time.sleep(3)
                     continue
+                # except 節のraise: try文の中で発生した例外が再送出
                 else: raise
 
+    # __parse_json について
+    # 文字列を辞書型に変換する
     def __parse_json(self, string):
-        res_dict = json.loads( string )
+        res_dict = json.loads(string)
         return res_dict["results"]
 
-    def __get_link( self ,target_list ) :
+    # __get_link
+    # 辞書を作成＞ターゲット辞書にターゲットリストを入れる
+    # 
+    def __get_link(self, target_list):
         edinet_dict = {}
-        for target_dict in target_list :
+        for target_dict in target_list:
             title = f'{ target_dict["filerName"] } { target_dict["docDescription"] }'
-            if not self.__is_yuho( title ) : continue
+            if not self.__is_yuho(title): continue
             docID = target_dict["docID"]
             url = f'{ self.base_url }/{ docID }'
             edinet_code = target_dict['edinetCode']
             updated = target_dict['submitDateTime']
-            edinet_dict[ docID ] = { 'id':docID ,'title':title ,'url':url ,'code':edinet_code ,'update':updated }
+            edinet_dict[docID] = {'id': docID, 'title': title, 'url': url, 'code': edinet_code, 'update': updated}
         return edinet_dict
 
-    def __is_yuho( self ,title ) :
-        if all( ( s in str( title ) ) for s in [ '有価証券報告書' ,'株式会社' ] ) and '受益証券' not in str( title ) :
+    # 有価証券報告書メソッド
+    # all()全ての要素がTrue
+    # s は全て文字列で、s に有価証券報告書、株式会社と受益証券が含まれていて、文字列がなければtrueを返す
+    # false を返す
+    def __is_yuho(self, title):
+        if all((s in str(title)) for s in ['有価証券報告書', '株式会社']) and '受益証券' not in str(title):
             return True
         return False
 
+    # ダンプファイルメソッド
+    # 
     def __dump_file( self ,result_dict ) :
         with open( os.path.join( self.base_path ,self.file_name ) ,'w' ,encoding=self.encode_type ) as of :
             writer = csv.DictWriter( of ,self.csv_tag ,lineterminator='\n' )

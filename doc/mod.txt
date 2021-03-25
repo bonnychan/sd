@@ -1,0 +1,5 @@
+Requests モジュール
+    Requests モジュールとは？
+        APIやHTTPにリクエストを簡単に生成するモジュール
+>>> import requests
+>>> r = requests.get('https://github.com/timeline.json')
